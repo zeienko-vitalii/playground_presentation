@@ -34,8 +34,10 @@ flutter:
   assets:
     - lib/assets/flare/PlayPause.flr
     - lib/assets/flare/PlayPauseLoop.flr
+    - lib/assets/flare/ForwardWind.flr
     - lib/assets/images/play.png
     - lib/assets/images/pause.png
     - lib/assets/images/forward.png
     - lib/assets/images/backward.png
+    - lib/assets/images/flutter.png
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:playground_presentation/ui/screens/base/widgets/base_state_without_bloc.dart';
+import 'package:playground_presentation/ui/screens/presentation/widget/flow_widgets/presentation_inherited_widget.dart';
 import 'package:playground_presentation/utils/navigation/navigation.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -18,7 +19,9 @@ class _MyHomePageState extends BaseStateWithoutBloc<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: _bodyWidget(context),
+      body: InheritedPresentationWidget(
+        child: _bodyWidget(context),
+      ),
     );
   }
 
@@ -29,9 +32,11 @@ class _MyHomePageState extends BaseStateWithoutBloc<MyHomePage> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              _buttonWidget("START", () {
-                NavigatorHelper.navigateToPresentation(context);
-              }),
+              Expanded(
+                child: _buttonWidget("START", () {
+                  NavigatorHelper.navigateToPresentation(context);
+                }),
+              ),
             ],
           ),
         ),
@@ -39,8 +44,8 @@ class _MyHomePageState extends BaseStateWithoutBloc<MyHomePage> {
 
   _buttonWidget(String text, VoidCallback callback) {
     return Container(
-      padding: EdgeInsets.all(250),
-      width: 150,
+      // padding: EdgeInsets.all(250),
+      // width: 150,
       child: RaisedButton(
         onPressed: callback,
         color: Colors.blueAccent,
