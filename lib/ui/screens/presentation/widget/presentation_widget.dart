@@ -5,11 +5,13 @@ import 'package:flare_flutter/flare.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:playground_presentation/assets/themes/app_colors.dart';
 
 import 'flow_widgets/first_widget.dart';
 import 'flow_widgets/presentation_inherited_widget.dart';
 import 'flow_widgets/second_widget.dart';
+import 'flow_widgets/third_widget.dart';
 
 class PresentationWidget extends StatefulWidget {
   @override
@@ -23,13 +25,14 @@ class _PresentationWidgetState extends State<PresentationWidget> {
   Timer _nextPageTimer;
 
   _PlayPauseController _playPauseController;
-  final _NavigationWindController _navigationFowardWindController =
-      _NavigationWindController();
-  final _NavigationWindController _navigationBackwardWindController =
-      _NavigationWindController();
+  final _NavigationWindController _navigationFowardWindController = _NavigationWindController();
+  final _NavigationWindController _navigationBackwardWindController = _NavigationWindController();
+
+  ScreenUtil screenUtil = ScreenUtil.getInstance();
 
   @override
   Widget build(BuildContext context) {
+//    screenUtil = ScreenUtil.getInstance()..init(context);
     return Material(
       child: Container(
         // color: Colors.red,
@@ -37,7 +40,7 @@ class _PresentationWidgetState extends State<PresentationWidget> {
           child: Stack(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.only(bottom: 108),
+                padding: EdgeInsets.only(bottom: screenUtil.setHeight(108)),
                 child: pagerView,
               ),
               Align(
@@ -98,6 +101,7 @@ class _PresentationWidgetState extends State<PresentationWidget> {
     newResidentFlowScreens = List();
     newResidentFlowScreens.add(FirstWidget());
     newResidentFlowScreens.add(SecondWidget());
+    newResidentFlowScreens.add(Spinner());
     // newResidentFlowScreens.add(ThirdWidget(this));
     // newResidentFlowScreens.add(FourthWidget(this));
     // newResidentFlowScreens.add(FifthWidget(this));
@@ -105,20 +109,17 @@ class _PresentationWidgetState extends State<PresentationWidget> {
 
   void goToNextScreen() {
     if (_pageController.page.round() != newResidentFlowScreens.length - 1) {
-      _pageController.nextPage(
-          duration: Duration(milliseconds: 200), curve: Curves.ease);
+      _pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.ease);
     }
   }
 
   void goToPreviousScreen() {
     if (_pageController.page.round() != 0) {
-      _pageController.previousPage(
-          duration: Duration(milliseconds: 200), curve: Curves.ease);
+      _pageController.previousPage(duration: Duration(milliseconds: 200), curve: Curves.ease);
     }
   }
 
-  bool _canGoToTheNextScreen() =>
-      (_pageController.page.round() != newResidentFlowScreens.length - 1);
+  bool _canGoToTheNextScreen() => (_pageController.page.round() != newResidentFlowScreens.length - 1);
 
   _controlButtons() => <Widget>[
         InkWell(
@@ -181,13 +182,14 @@ class _PresentationWidgetState extends State<PresentationWidget> {
   }
 
   void _runTimer() {
-    _nextPageTimer = Timer(
+    _nextPageTimer = Timer.periodic(
         Duration(
-          seconds: 5,
-        ), () {
+          seconds: 3,
+        ), (_timer) {
       if (_canGoToTheNextScreen()) {
         goToNextScreen();
       } else {
+        _playPauseController.playAnimation();
         _stopTimer();
       }
     });
@@ -199,6 +201,7 @@ class _PlayPauseController extends FlareControls {
   VoidCallback _endsPlaying;
 
   _PlayPauseController(this._onPlaying, this._endsPlaying);
+
   ActorAnimation _actorAnimation;
   bool isPlay = false;
   bool isAnimationFinised = false;
@@ -242,6 +245,7 @@ class _PlayPauseController extends FlareControls {
 
 class _NavigationWindController extends FlareControls {
   _NavigationWindController();
+
   ActorAnimation _actorAnimation;
   bool isPlay = false;
 
@@ -275,72 +279,3 @@ class _NavigationWindController extends FlareControls {
     );
   }
 }
-
-/*
- List<Widget> newResidentFlowScreens;
-  PageController _pageController;
-  Widget pagerView;
-  StreamSubscription createCareReceiverEventSubscription;
-
-
-  Widget _buildPageView() {
-    _pageController = PageController(
-      initialPage: 0,
-    );
-    return PageView(
-      controller: _pageController,
-      physics: NeverScrollableScrollPhysics(),
-      children: newResidentFlowScreens,
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _initFlowScreens();
-    pagerView = _buildPageView();
-    _subscribeToCreatedCareReceiverEvents();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    createCareReceiverEventSubscription.cancel();
-  }
-
-  _subscribeToCreatedCareReceiverEvents() {
-    createCareReceiverEventSubscription =
-        bloc.createdCareReceiverEventControllerStream.listen((event) {
-          Navigator.pop(widget.buildContext, UpdateState.NEED_UPDATE);
-        });
-  }
-
-  _initFlowScreens() {
-    newResidentFlowScreens = List();
-    newResidentFlowScreens.add(FirstWidget(this));
-    newResidentFlowScreens.add(SecondWidget(this));
-    newResidentFlowScreens.add(ThirdWidget(this));
-    newResidentFlowScreens.add(FourthWidget(this));
-    newResidentFlowScreens.add(FifthWidget(this));
-  }
-
-  void goToNextScreen(){
-   if (_pageController.page.round() != newResidentFlowScreens.length -1){
-      _pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.ease);
-    }
-  }
-
-  void goToPreviousScreen(){
-    if (_pageController.page.round() != 0) {
-      _pageController.previousPage(duration: Duration(milliseconds: 200), curve: Curves.ease);
-    }
-  }
-
-  @override
-  Widget getWidget(BuildContext context) {
-
-    return LoadingIndicatorAndErrorsWidget(
-        baseBloc: bloc,
-        childWidget: InheritedResidentWidget(bloc:bloc, child: pagerView));
-  }
-  */

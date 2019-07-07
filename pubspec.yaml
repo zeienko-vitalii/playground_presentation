@@ -32,6 +32,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - lib/assets/flare/PlayPause1.flr
     - lib/assets/flare/PlayPause.flr
     - lib/assets/flare/PlayPauseLoop.flr
     - lib/assets/flare/ForwardWind.flr
